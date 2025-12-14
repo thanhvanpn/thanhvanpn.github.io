@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>IELTS Speaking Collection</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, Arial;
+      background: #fff7fb;
+      color: #333;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+
+    /* Title */
+    .page-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #d9006d;
+      margin: 30px 0;
+      text-align: center;
+    }
+
+    /* Grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    /* Card */
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #ffd0e3;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+      cursor: pointer;
+      transition: .25s;
+    }
+
+    .card:hover {
+      transform: translateY(-14px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .14);
+    }
+
+    /* Card content */
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #d9006d;
+      margin-bottom: 6px;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .card-meta {
+      font-size: 13px;
+      color: #999;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="header"></div>
+
+  <div class="container">
+    <div class="page-title">🗣️ IELTS Speaking Collection</div>
+
+    <div id="speakingGrid" class="card-grid"></div>
+  </div>
+
+  <div id="footer"></div>
+  <div id="chatbot"></div>
+
+  <script>
+    const SPEAKING_TOPICS = [
+      {
+        id: 1,
+        title: "Speaking Test 1 – Books",
+        desc: "Part 1: Reading habits • Part 2: Describe a book • Part 3: Reading & technology",
+        count: 3421
+      },
+      {
+        id: 2,
+        title: "Speaking Test 2 – Travel",
+        desc: "Part 1: Travel experiences • Part 2: A memorable trip • Part 3: International tourism",
+        count: 2894
+      },
+      {
+        id: 3,
+        title: "Speaking Test 3 – Technology",
+        desc: `Part 1: Daily technology • Part 2: Useful app • Part 3: Technology & education`,
+        count: 2540
+      },
+      {
+        id: 4,
+        title: "Speaking Test 4 – Work & Study",
+        desc: "Part 1: Job & studies • Part 2: Ideal job • Part 3: Future of work",
+        count: 3122
+      },
+      {
+        id: 5,
+        title: "Speaking Test 5 – Environment",
+        desc: "Part 1: Environmental issues • Part 2: A polluted place • Part 3: Climate change",
+        count: 1975
+      }
+    ];
+
+    const wrap = document.getElementById("speakingGrid");
+
+    wrap.innerHTML = SPEAKING_TOPICS.map(t => `
+  <div class="card" onclick="location.href='speaking-test.html?id=${t.id}'">
+    <div class="card-title">${t.title}</div>
+    <div class="card-desc">${t.desc}</div>
+    <div class="card-meta">${t.count.toLocaleString()} lượt luyện nói</div>
+  </div>
+`).join("");
+  </script>
+  <div id="footer"></div>
+  <script src="app.js"></script>
+
+</body>
+
+</html>

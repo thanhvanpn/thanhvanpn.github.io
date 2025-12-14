@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>IELTS Writing Collection Mock Test</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .page-title {
+      font-size: 32px;
+      font-weight: bold;
+      color: #d9006d;
+      margin-top: 25px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #ffd0e3;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .card:hover {
+      transform: translateY(-20px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: #d9006d;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .card-count {
+      font-size: 13px;
+      color: #999;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header"></div>
+
+  <div class="container">
+    <div class="page-title">✍️ Writing Collection</div>
+    <div id="writingGrid" class="card-grid"></div>
+  </div>
+
+  <div id="footer"></div>
+  <div id="chatbot"></div>
+  <script src="app.js"></script>
+
+  <script>
+    // Fake data, bạn thay bằng 20 đề thật
+    const WRITING_LIST = [
+      {
+        id: 1,
+        title: "Wrting Test 1",
+        desc: "Task 1: Bar chart • Task 2: Government & Health",
+        count: 3214
+      },
+      {
+        id: 2,
+        title: "Wrting Test 2",
+        desc: "Task 1: Line chart • Task 2: Public Transport",
+        count: 1980
+      },
+      {
+        id: 3,
+        title: "Wrting Test 3",
+        desc: "Task 1: Table • Task 2: Education Funding",
+        count: 1452
+      },
+      {
+        id: 4,
+        title: "Wrting Test 4",
+        desc: "Task 1: Table • Task 2: Education Funding",
+        count: 2302
+      }
+    ];
+
+    const wrap = document.getElementById("writingGrid");
+
+    wrap.innerHTML = WRITING_LIST.map(t => `
+      <div class="card" onclick="location.href='writing-test.html?id=${t.id}'">
+        <div class="card-title">${t.title}</div>
+        <div class="card-desc">${t.desc}</div>
+        <div class="card-count">${t.count.toLocaleString()} lượt làm bài</div>
+      </div>
+    `).join('');
+  </script>
+</body>
+
+</html>

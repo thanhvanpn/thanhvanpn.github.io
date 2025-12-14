@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>Reading Test — IELTS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="header"></div>
+
+  <div class="container">
+    <div id="testArea" class="test-wrap"></div>
+  </div>
+
+  <div id="footer"></div>
+  <div id="chatbot"></div>
+
+  <script src="app.js"></script>
+
+  <script>
+    // ======================
+    // LOAD TEST DATA
+    // ======================
+    const params = new URLSearchParams(location.search);
+    const id = parseInt(params.get('id') || '1', 10);
+    const data = window.__IELTS_PASSAGES || [];
+    const test = data.find(p => p.id === id) || data[0];
+
+    // ======================
+    // RENDER LAYOUT
+    // ======================
+    const wrap = document.getElementById('testArea');
+    wrap.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div id="timerBox" class="timer">⏱ <span id="timerText">60:00</span></div>
+
+        <div>
+          <div class="h2">${test.title}</div>
+          <div style="color:#777;margin-top:4px;">
+            ${test.label} • ${test.count.toLocaleString()} lượt làm
+          </div>
+        </div>
+
+        <button class="btn-check" id="saveProgressBtn">Lưu tiến trình</button>
+      </div>
+
+      <div class="test-grid">
+        <div class="passage">
+          <h3 style="color:var(--pink-600)">${test.statement}</h3>
+          <div style="white-space:pre-wrap;line-height:1.6;">
+            ${escapeHtml(test.passage)}
+          </div>
+        </div>
+
+        <div class="q-panel">
+          <div id="questionsArea"></div>
+
+          <div style="margin-top:14px;display:flex;gap:10px;">
+            <button class="btn-check" id="checkBtn">Chấm điểm</button>
+            <button class="btn-check" id="resetBtn"
+              style="background:#fff;color:var(--pink-600);border:1px solid rgba(226,58,122,.2)">
+              Reset
+            </button>
+          </div>
+
+          <div id="resultBox" class="result"></div>
+        </div>
+      </div>
+    `;
+
+    function escapeHtml(s) {
+      return (s || '')
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    // ======================
+    // RENDER QUESTIONS
+    // ======================
+    const qArea = document.getElementById('questionsArea');
+
+    test.questions.forEach((q, idx) => {
+
+      // DROPDOWN
+      if (q.type === 'dropdown') {
+        qArea.innerHTML += `
+          <div class="q-row">
+            <div class="q-num">${idx + 1}</div>
+            <div style="flex:1">
+              <b>${q.q}</b><br>
+              <select id="${q.id}">
+                <option value="">— Select —</option>
+                ${q.choices.map(c => `<option value="${c}">${c}</option>`).join('')}
+              </select>
+            </div>
+          </div>`;
+      }
+
+      // MCQ
+      else if (q.type === 'mcq') {
+        qArea.innerHTML += `
+          <div class="q-row">
+            <div class="q-num">${idx + 1}</div>
+            <div style="flex:1">
+              <b>${q.q}</b>
+              ${q.choices.map(c => `
+                <label style="display:block;margin-top:6px">
+                  <input type="radio" name="${q.id}" value="${c}"> ${c}
+                </label>`).join('')}
+            </div>
+          </div>`;
+      }
+
+      // FILL IN THE BLANK
+      else if (q.type === 'fill') {
+        let i = 0;
+        const html = q.q.replace(/_____/g, () =>
+          `<input type="text" class="fill-input" id="${q.id}_${i++}">`
+        );
+
+        qArea.innerHTML += `
+          <div class="q-row">
+            <div class="q-num">${idx + 1}</div>
+            <div style="flex:1;line-height:2">${html}</div>
+          </div>`;
+      }
+    });
+
+    // ======================
+    // CHECK ANSWERS
+    // ======================
+    document.getElementById('checkBtn').onclick = () => {
+      let correct = 0;
+
+      test.questions.forEach(q => {
+
+        if (q.type === 'dropdown') {
+          const el = document.getElementById(q.id);
+          if (el.value === q.answer) {
+            el.style.border = "2px solid #00cc66";
+            correct++;
+          } else if (el.value) {
+            el.style.border = "2px solid #ff5b6b";
+          }
+        }
+
+        else if (q.type === 'mcq') {
+          const sel = document.querySelector(`input[name="${q.id}"]:checked`);
+          if (sel && sel.value === q.answer) {
+            correct++;
+            sel.parentElement.style.border = "1px solid #00cc66";
+          } else if (sel) {
+            sel.parentElement.style.border = "1px solid #ff5b6b";
+          }
+        }
+
+        else if (q.type === 'fill') {
+          let ok = true;
+          q.answer.forEach((ans, i) => {
+            const input = document.getElementById(`${q.id}_${i}`);
+            const user = (input.value || '').trim().toLowerCase();
+            const right = ans.toLowerCase();
+            if (user === right) {
+              input.classList.add('fill-correct');
+            } else {
+              input.classList.add('fill-wrong');
+              ok = false;
+            }
+          });
+          if (ok) correct++;
+        }
+      });
+
+      document.getElementById('resultBox').innerText =
+        `Bạn đúng ${correct} / ${test.questions.length}`;
+    };
+
+    // ======================
+    // RESET
+    // ======================
+    document.getElementById('resetBtn').onclick = () => {
+      test.questions.forEach(q => {
+        if (q.type === 'dropdown') document.getElementById(q.id).value = '';
+        if (q.type === 'mcq')
+          document.querySelectorAll(`input[name="${q.id}"]`).forEach(i => i.checked = false);
+        if (q.type === 'fill')
+          q.answer.forEach((_, i) => {
+            const el = document.getElementById(`${q.id}_${i}`);
+            el.value = '';
+            el.className = 'fill-input';
+          });
+      });
+      document.getElementById('resultBox').innerText = '';
+    };
+
+    // ======================
+    // TIMER 60 MIN
+    // ======================
+    let timeLeft = 3600;
+    const timerText = document.getElementById('timerText');
+
+    setInterval(() => {
+      timeLeft--;
+      timerText.textContent =
+        String(Math.floor(timeLeft / 60)).padStart(2, '0') + ':' +
+        String(timeLeft % 60).padStart(2, '0');
+
+      if (timeLeft <= 0) {
+        document.getElementById('checkBtn').click();
+        alert("Hết giờ!");
+      }
+    }, 1000);
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>IELTS Writing Test</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .test-title {
+      font-size: 28px;
+      font-weight: bold;
+      color: #d9006d;
+      margin-bottom: 12px;
+    }
+
+    .writing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+      margin-top: 20px;
+    }
+
+    .task-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #ffd0e3;
+    }
+
+    .task-header {
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 6px;
+      color: #d9006d;
+    }
+
+    .task-text {
+      line-height: 1.6;
+      color: #555;
+      white-space: pre-wrap;
+    }
+
+    .editor-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid #ffd0e3;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 180px;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      padding: 12px;
+      font-size: 15px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      border: none;
+      background: #d9006d;
+      color: white;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.85;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      border: 2px solid #d9006d;
+      color: #d9006d;
+    }
+
+    .result-box {
+      margin-top: 15px;
+      background: #ffe5f2;
+      border-radius: 12px;
+      padding: 16px;
+      display: none;
+    }
+
+    .word-count {
+      font-size: 13px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="header"></div>
+
+  <div class="container">
+    <div id="testContainer"></div>
+  </div>
+
+  <div id="footer"></div>
+
+  <script>
+    // -----------------------------------
+    // 1. LOAD DATA SAMPLE (bạn thay bằng data thật)
+    // -----------------------------------
+    const WRITING_DATA = {
+      1: {
+        title: "Wrting Test 1",
+        task1: "The diagrams below show changes in Happy Valley Shopping Centre in 1982 and 2012. Summarize the information by selecting and reporting the main features and make comparisons where relevant.",
+        image: "assets/c1.png",
+        task2: "In today’s world of advanced science and technology, we still greatly value our artists such as musicians, painters, and writers. What can the arts tell us about life that science and technology cannot?"
+      },
+      2: {
+        title: "Wrting Test 2",
+        task1: "The charts below show the distribution of the world’s water and the use of water in three countries. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+        image: "assets/c2.png",
+        task2: "Everyone should stay at school until 18. To what extent do you agree or disagree?"
+      },
+      3: {
+        title: "Wrting Test 3",
+        task1: "The graphs below show the total percentage of films released and the total percentage of ticket sales in 1996 and 2006 in a country. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+        image: "assets/c3.png",
+        task2: "Large companies often use sports events to promote their products. Some people think this has a negative impact on sports. To what extent do you agree or disagree?"
+      },
+      4: {
+        title: "Writing Test 4",
+        task1: "The table shows the amount of money given to developing countries by the USA, EU countries and other countries from 2006 to 2010 (Figures are in millions of dollars). Summarise the information by selecting and reporting the main features, and make comparisons where relevant.",
+        image: "assets/c4.png",
+        task2: "Some people think the government should subsidise fruits and vegetables to make healthy food more affordable. Others argue that the government should tax unhealthy food instead. Discuss both views and give your opinion."
+      }
+    };
+
+    // -----------------------------------
+    // 2. LẤY ID TỪ URL
+    // -----------------------------------
+    const params = new URLSearchParams(location.search);
+    const id = parseInt(params.get("id") || "1", 10);
+    const data = WRITING_DATA[id];
+
+    // -----------------------------------
+    // 3. RENDER UI
+    // -----------------------------------
+    const wrap = document.getElementById("testContainer");
+    wrap.innerHTML = `
+      <div class="test-title">✍️ Writing Test — ${data.title}</div>
+
+      <div class="writing-grid">
+        <!-- LEFT SIDE: TASKS -->
+        <div>
+          <div class="task-box">
+            <div class="task-header">Task 1</div>
+            <div class="task-text">${data.task1}</div>
+            ${data.image ? `
+      <div style="margin-top:16px; text-align:center;">
+        <img src="${data.image}" 
+             style="max-width:100%; border-radius:12px; border:1px solid #eee;">
+      </div>
+    ` : ""}
+          </div>
+
+          <div class="task-box" style="margin-top:20px;">
+            <div class="task-header">Task 2</div>
+            <div class="task-text">${data.task2}</div>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE: EDITOR -->
+        <div class="editor-box">
+          <div>
+            <div style="font-weight:700;margin-bottom:6px;">Your Task 1 Answer:</div>
+            <textarea id="task1Input" placeholder="Write Task 1 here..."></textarea>
+            <div class="word-count" id="wc1">0 words</div>
+          </div>
+
+          <div style="margin-top:10px;">
+            <div style="font-weight:700;margin-bottom:6px;">Your Task 2 Answer:</div>
+            <textarea id="task2Input" placeholder="Write Task 2 here..."></textarea>
+            <div class="word-count" id="wc2">0 words</div>
+          </div>
+
+          <div style="display:flex; gap:12px; margin-top:10px;">
+            <button class="btn" id="submitBtn">Submit to AI</button>
+            <button class="btn btn-secondary" id="saveBtn">Save</button>
+          </div>
+
+          <div id="resultBox" class="result-box"></div>
+        </div>
+      </div>
+    `;
+
+    // -----------------------------------
+    // 4. WORD COUNT
+    // -----------------------------------
+    function countWords(text) {
+      return text.trim().split(/\s+/).filter(x => x).length;
+    }
+
+    document.getElementById("task1Input").addEventListener("input", () => {
+      document.getElementById("wc1").textContent = countWords(task1Input.value) + " words";
+    });
+
+    document.getElementById("task2Input").addEventListener("input", () => {
+      document.getElementById("wc2").textContent = countWords(task2Input.value) + " words";
+    });
+
+    // -----------------------------------
+    // 5. SAVE PROGRESS
+    // -----------------------------------
+    document.getElementById("saveBtn").onclick = () => {
+      const saveData = {
+        t1: task1Input.value,
+        t2: task2Input.value
+      };
+      localStorage.setItem("writing_test_" + id, JSON.stringify(saveData));
+      alert("Progress saved!");
+    };
+
+    // LOAD SAVED
+    (function loadSaved() {
+      const raw = localStorage.getItem("writing_test_" + id);
+      if (!raw) return;
+      try {
+        const obj = JSON.parse(raw);
+        task1Input.value = obj.t1 || "";
+        task2Input.value = obj.t2 || "";
+        wc1.textContent = countWords(obj.t1 || "") + " words";
+        wc2.textContent = countWords(obj.t2 || "") + " words";
+      } catch (e) { }
+    })();
+
+    // -----------------------------------
+    // 6. SUBMIT TO AI VIA CLOUDFLARE WORKER
+    // -----------------------------------
+    const WORKER_URL = "https://broken-art-6635.sonltcoder.workers.dev/";
+
+    document.getElementById("submitBtn").onclick = async () => {
+      const t1 = task1Input.value.trim();
+      const t2 = task2Input.value.trim();
+
+      if (!t1 || !t2) {
+        alert("Please complete both tasks before submitting.");
+        return;
+      }
+
+      resultBox.style.display = "block";
+      resultBox.innerHTML = "⏳ AI is evaluating your writing...";
+
+      const response = await fetch(WORKER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            { role: "system", content: "You are an IELTS Writing examiner. Score Task 1 and Task 2 separately using official band descriptors. Just give me IELTS result band" },
+            { role: "user", content: `Task 1:\n${t1}\n\nTask 2:\n${t2}` }
+          ]
+        })
+      });
+
+      const data = await response.json();
+      const ai = data.choices?.[0]?.message?.content || "Error";
+
+      resultBox.innerHTML = `<b>AI Feedback:</b><br><br>${ai}`;
+    };
+  </script>
+  <div id="chatbot"></div>
+  <script src="app.js"></script>
+</body>
+
+</html>

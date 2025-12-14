@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IELTS E-Learning — Home</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #11162a;
+      --accent: #ff4da6;
+      --accent-2: #7c7cff;
+      --text: #e7e9ee;
+      --muted: #aab0c0;
+      --glass: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.14);
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(255, 77, 166, .25), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(124, 124, 255, .25), transparent 55%),
+        linear-gradient(180deg, #0b1020, #0a0f1e 60%, #090e1b);
+    }
+
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(11, 16, 32, .75), rgba(11, 16, 32, .35));
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid;
+      place-items: center;
+      color: #0b1020;
+      font-weight: 900;
+    }
+
+    .nav a {
+      color: var(--text);
+      text-decoration: none;
+      opacity: .9
+    }
+
+    .nav .cta {
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0b1020;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(255, 77, 166, .35);
+    }
+
+    /* Hero */
+    .hero {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 72px 20px 40px;
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-weight: 600;
+      width: max-content;
+    }
+
+    .title {
+      font-size: clamp(36px, 6vw, 56px);
+      line-height: 1.05;
+      margin: 16px 0 14px;
+      font-weight: 800;
+      letter-spacing: -.6px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 18px;
+      max-width: 560px
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap
+    }
+
+    .btn {
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--glass);
+      color: var(--text);
+      cursor: pointer
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0b1020;
+      border: none
+    }
+
+    /* Stat card */
+    .stat {
+      background: linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .02));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px
+    }
+
+    .stat .box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px
+    }
+
+    .stat .num {
+      font-size: 28px;
+      font-weight: 800
+    }
+
+    .stat .cap {
+      color: var(--muted)
+    }
+
+    /* Skills */
+    .section {
+      max-width: 1100px;
+      margin: 20px auto 60px;
+      padding: 0 20px
+    }
+
+    .section h2 {
+      font-size: 28px;
+      margin: 24px 0 14px
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr
+      }
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .02));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px;
+      transition: transform .25s ease, box-shadow .25s ease
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .35)
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: auto -40% -60% -40%;
+      height: 120%;
+      background: radial-gradient(closest-side, rgba(255, 77, 166, .35), transparent);
+      opacity: .6
+    }
+
+    .icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0b1020;
+      font-size: 22px
+    }
+
+    .card h3 {
+      margin: 14px 0 8px
+    }
+
+    .card p {
+      color: var(--muted);
+      margin: 0
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(11, 16, 32, .6), rgba(11, 16, 32, .9));
+    }
+
+    .foot {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 22px 20px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap
+    }
+
+    /* Skill modal overlay */
+    .skill-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    /* Box */
+    .skill-box {
+      background: linear-gradient(180deg, rgba(17, 22, 42, .95), rgba(17, 22, 42, .9));
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 28px;
+      width: min(420px, 92%);
+      text-align: center;
+      animation: pop .25s ease;
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .skill-box h3 {
+      margin: 0 0 18px;
+      font-size: 22px;
+    }
+
+    /* Skill grid */
+    .skill-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .skill-item {
+      padding: 16px;
+      border-radius: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .skill-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(255, 77, 166, .35);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #0b1020;
+    }
+
+    /* Close */
+    .skill-close {
+      margin-top: 18px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="nav">
+      <div class="brand">
+        <div class="logo">IEL</div>
+        <span>IELTS E-Learning</span>
+      </div>
+      <nav style="display:flex; gap:16px; align-items:center">
+        <a href="#skills">Skills</a>
+        <a href="#about">About</a>
+        <button class="cta" id="startBtn">Start Learning</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <main class="hero">
+    <div>
+      <span class="badge">🎯 Band 7.0 → 8.5+ roadmap</span>
+      <h1 class="title">Learn IELTS smarter.
+        <br />Practice with confidence.
+      </h1>
+      <p class="subtitle">High-quality lessons, real exam tasks, and instant feedback for Reading, Listening, Writing &
+        Speaking.</p>
+      <div class="hero-actions">
+        <button class="btn primary" onclick="location.href='reading.html'">Start Free Practice</button>
+        <button class="btn" onclick="location.href='writing.html'">View Writing Samples</button>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="box">
+        <div class="num">500+</div>
+        <div class="cap">Practice tasks</div>
+      </div>
+      <div class="box">
+        <div class="num">8.0+</div>
+        <div class="cap">Band-level samples</div>
+      </div>
+      <div class="box">
+        <div class="num">24/7</div>
+        <div class="cap">Self-paced</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Skills -->
+  <section id="skills" class="section">
+    <h2>IELTS Skills</h2>
+    <div class="grid">
+      <div class="card" onclick="location.href='reading.html'">
+        <div class="icon">📚</div>
+        <h3>Reading</h3>
+        <p>Academic passages with timing & explanations.</p>
+      </div>
+      <div class="card" onclick="location.href='listening.html'">
+        <div class="icon">🎧</div>
+        <h3>Listening</h3>
+        <p>Authentic audios, transcripts, and tips.</p>
+      </div>
+      <div class="card" onclick="location.href='writing.html'">
+        <div class="icon">✍️</div>
+        <h3>Writing</h3>
+        <p>Band 8+ essays & Task 1 reports.</p>
+      </div>
+      <div class="card" onclick="location.href='speaking.html'">
+        <div class="icon">🗣️</div>
+        <h3>Speaking</h3>
+        <p>Model answers & cue cards.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skill Select Modal -->
+  <div id="skillModal" class="skill-modal">
+    <div class="skill-box">
+      <h3>Choose your skill</h3>
+
+      <div class="skill-grid">
+        <div class="skill-item" data-link="reading.html">📚 Reading</div>
+        <div class="skill-item" data-link="listening.html">🎧 Listening</div>
+        <div class="skill-item" data-link="writing.html">✍️ Writing</div>
+        <div class="skill-item" data-link="speaking.html">🗣️ Speaking</div>
+      </div>
+
+      <button class="skill-close">Cancel</button>
+    </div>
+  </div>
+
+
+  <!-- Footer -->
+  <footer>
+    <div class="foot">
+      <span>© 2025 IELTS E-Learning</span>
+    </div>
+  </footer>
+
+  <script>
+    const modal = document.getElementById('skillModal');
+    const startBtn = document.getElementById('startBtn');
+
+    startBtn.onclick = () => {
+      modal.style.display = 'flex';
+    };
+
+    modal.addEventListener('click', e => {
+      if (e.target.classList.contains('skill-modal') ||
+        e.target.classList.contains('skill-close')) {
+        modal.style.display = 'none';
+      }
+    });
+
+    document.querySelectorAll('.skill-item').forEach(item => {
+      item.onclick = () => {
+        location.href = item.dataset.link;
+      };
+    });
+  </script>
+
+</body>
+
+</html>

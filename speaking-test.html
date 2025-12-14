@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>IELTS Speaking Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Inter, system-ui;
+      background: #fff7fb;
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 20px 60px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #d9006d;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #ffd0e3;
+      padding: 22px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .06);
+      margin-bottom: 20px;
+    }
+
+    .part-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #d9006d;
+      margin-bottom: 10px;
+    }
+
+    .question {
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .timer {
+      font-weight: 800;
+      color: #d9006d;
+      margin-bottom: 12px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn.start {
+      background: linear-gradient(135deg, #ff4da6, #7c7cff);
+      color: #0b1020;
+    }
+
+    .btn.stop {
+      background: #eee;
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header"></div>
+
+  <div class="container">
+    <div id="title" class="page-title"></div>
+    <div id="testArea"></div>
+  </div>
+
+  <script>
+    /* =====================
+       SPEAKING DATA
+    ===================== */
+    const SPEAKING_DATA = [
+      {
+        id: 1,
+        title: "📚 Topic: Books",
+        part1: [
+          "Do you enjoy reading books?",
+          "What kind of books do you like?",
+          "How often do you read?"
+        ],
+        part2: {
+          cue: "Describe a book you recently read.",
+          bullets: [
+            "what the book was",
+            "when you read it",
+            "why you liked or disliked it"
+          ],
+          explain: "and explain how it influenced you."
+        },
+        part3: [
+          "Why do people read less nowadays?",
+          "How does technology affect reading habits?",
+          "Should children be encouraged to read more?"
+        ]
+      },
+      {
+        id: 2,
+        title: "💻 Topic: Technology",
+        part1: [
+          "How often do you use technology?",
+          "What device do you use most?",
+          "Has technology changed your life?"
+        ],
+        part2: {
+          cue: "Describe a piece of technology you find useful.",
+          bullets: [
+            "what it is",
+            "how often you use it",
+            "what you use it for"
+          ],
+          explain: "and explain why it is important to you."
+        },
+        part3: [
+          "Is technology making people less social?",
+          "How will technology change education?",
+          "Should children use smartphones?"
+        ]
+      },
+      {
+        id: 4,
+        title: "Speaking Test 4 – Work & Study",
+
+        part1: [
+          "Do you work or are you a student?",
+          "What do you like most about your job or studies?",
+          "Is there anything you dislike about it?",
+          "What kind of work would you like to do in the future?"
+        ],
+
+        part2: {
+          cue: "Describe an ideal job you would like to have.",
+          bullets: [
+            "what the job is",
+            "what qualifications or skills are needed",
+            "what kind of work you would do"
+          ],
+          explain: "and explain why this job is ideal for you."
+        },
+
+        part3: [
+          "How do you think jobs will change in the future?",
+          "Is job satisfaction more important than salary?",
+          "Should governments help people find jobs?",
+          "Do you think people will work fewer hours in the future?"
+        ]
+      },
+      {
+        id: 5,
+        title: "Speaking Test 5 – Environment",
+
+        part1: [
+          "Do you care about the environment?",
+          "What environmental problems are common in your country?",
+          "Do you think individuals can help protect the environment?",
+          "Have environmental issues changed in recent years?"
+        ],
+
+        part2: {
+          cue: "Describe a place you know that has been polluted.",
+          bullets: [
+            "where the place is",
+            "what kind of pollution it has",
+            "how it affects people or the environment"
+          ],
+          explain: "and explain what you think should be done to improve this situation."
+        },
+
+        part3: [
+          "Why do you think environmental problems are becoming more serious?",
+          "Should governments or individuals be responsible for protecting the environment?",
+          "How can education help people become more environmentally friendly?",
+          "Do you think economic development harms the environment?"
+        ]
+      }
+    ];
+
+    /* =====================
+       GET TOPIC FROM URL
+    ===================== */
+    const params = new URLSearchParams(location.search);
+    const id = parseInt(params.get("id") || "1");
+    const topic = SPEAKING_DATA.find(t => t.id === id) || SPEAKING_DATA[0];
+
+    document.getElementById("title").innerText = topic.title;
+
+    /* =====================
+       RENDER UI
+    ===================== */
+    const area = document.getElementById("testArea");
+
+    area.innerHTML = `
+  ${renderPart1()}
+  ${renderPart2()}
+  ${renderPart3()}
+`;
+
+    function renderPart1() {
+      return `
+  <div class="card">
+    <div class="part-title">Part 1 – Introduction</div>
+    <div class="question">
+      ${topic.part1.map(q => "• " + q).join("<br>")}
+    </div>
+  </div>`;
+    }
+
+    function renderPart2() {
+      return `
+  <div class="card">
+    <div class="part-title">Part 2 – Cue Card</div>
+    <div class="timer" id="timer2">Preparation: 01:00</div>
+    <div class="question">
+      ${topic.part2.cue}<br><br>
+      ${topic.part2.bullets.map(b => "• " + b).join("<br>")}<br><br>
+      ${topic.part2.explain}
+    </div>
+  </div>`;
+    }
+
+    function renderPart3() {
+      return `
+  <div class="card">
+    <div class="part-title">Part 3 – Discussion</div>
+    <div class="question">
+      ${topic.part3.map(q => "• " + q).join("<br>")}
+    </div>
+  </div>`;
+    }
+
+    function controls(p, isPart2 = false) {
+      return `
+    <div class="controls">
+      <button class="btn start" onclick="${isPart2 ? 'startPart2()' : 'startRecording(' + p + ')'}">🎙 Start</button>
+      <button class="btn stop" onclick="stopRecording(${p})">⏹ Stop</button>
+    </div>`;
+    }
+
+    /* =====================
+       RECORDING LOGIC
+    ===================== */
+    let recorder, stream, chunks = [], timerInterval;
+
+    async function startRecording(part) {
+      if (recorder?.state === "recording") return;
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      recorder = new MediaRecorder(stream);
+      chunks = [];
+      recorder.ondataavailable = e => chunks.push(e.data);
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: "audio/webm" });
+        document.getElementById("audio" + part).src = URL.createObjectURL(blob);
+        stream.getTracks().forEach(t => t.stop());
+      };
+      recorder.start();
+    }
+
+    function stopRecording() {
+      if (recorder?.state === "recording") {
+        recorder.stop();
+        clearInterval(timerInterval);
+      }
+    }
+
+    function startPart2() {
+      let t = 60;
+      const timer = document.getElementById("timer2");
+      timerInterval = setInterval(() => {
+        t--;
+        if (t <= 0) {
+          clearInterval(timerInterval);
+          timer.textContent = "🎙 Speaking time";
+          startRecording(2);
+        }
+      }, 1000);
+    }
+  </script>
+
+<div id="footer"></div>
+<script src="app.js"></script>
+</body>
+
+</html>
