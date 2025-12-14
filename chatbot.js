@@ -65,6 +65,37 @@ function scrollDown() {
   box.scrollTop = box.scrollHeight;
 }
 
+async function fetchWithRetry(url, options, retries = 3, delay = 800) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, options);
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      if (!data || !data.choices?.[0]?.message?.content) {
+        throw new Error("Invalid AI response");
+      }
+
+      return data; // ✅ success
+    } catch (err) {
+      lastError = err;
+      console.warn(`Retry ${attempt}/${retries} failed:`, err.message);
+
+      if (attempt < retries) {
+        await new Promise(r => setTimeout(r, delay * attempt)); // backoff
+      }
+    }
+  }
+
+  throw lastError;
+}
+
 async function sendMsg() {
   const input = document.getElementById("userInput");
   const messagesBox = document.getElementById("chatMessages");
@@ -72,40 +103,53 @@ async function sendMsg() {
   const userMessage = input.value.trim();
   if (!userMessage) return;
 
-  // Hiện tin nhắn user
   messagesBox.innerHTML += `<div class="msg-user">${userMessage}</div>`;
   scrollDown();
   input.value = "";
 
   const typingId = "typing-" + Date.now();
   messagesBox.innerHTML += `
-        <div id="${typingId}" class="typing-indicator">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-        </div>
+    <div id="${typingId}" class="typing-indicator">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+  `;
+  scrollDown();
+
+  try {
+    const data = await fetchWithRetry(
+      WORKER_URL,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            { role: "system", content: "You are an IELTS tutoring assistant." },
+            { role: "user", content: userMessage }
+          ]
+        })
+      },
+      3 // 👈 retry 3 lần
+    );
+
+    const aiMsg = data.choices[0].message.content;
+
+    document.getElementById(typingId)?.remove();
+    messagesBox.innerHTML += `
+      <div class="msg-ai">${formatAIMessage(aiMsg)}</div>
     `;
-  scrollDown();
+    scrollDown();
 
-  // Gửi đến Cloudflare Worker
-  const response = await fetch(WORKER_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      messages: [
-        { role: "system", content: "You are an IELTS tutoring assistant." },
-        { role: "user", content: userMessage }
-      ]
-    })
-  });
+  } catch (error) {
+    console.error("AI failed after retries:", error);
 
-  const data = await response.json();
-  const aiMsg = data.choices?.[0]?.message?.content || "Error";
-
-  // 👉 Xóa typing indicator
-  document.getElementById(typingId)?.remove();
-
-  // Hiện phản hồi
-  messagesBox.innerHTML += `<div class="msg-ai">${formatAIMessage(aiMsg)}</div>`;
-  scrollDown();
+    document.getElementById(typingId)?.remove();
+    messagesBox.innerHTML += `
+      <div class="msg-ai error">
+        ⚠️ Xin lỗi, hệ thống đang bận. Vui lòng thử lại sau ít phút.
+      </div>
+    `;
+    scrollDown();
+  }
 }
